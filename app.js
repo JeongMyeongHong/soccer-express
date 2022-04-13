@@ -15,7 +15,7 @@ const corsOptions = {
 }
 
 const APP = './app/routes'
-const nodes = ['basic','board','user']
+const nodes = ['basic','board','user','todo']
 for(const leaf of nodes){
   require(`${APP}/${leaf}.routes`)({url:`/api/${leaf}`,app})
 }
