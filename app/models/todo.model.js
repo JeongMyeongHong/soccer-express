@@ -1,5 +1,7 @@
 module.exports = mongoose => mongoose.model(
-    'todo', mongoose.Schema(
-        {task : { type: String, required: true, unique: true }},
+    'todo', mongoose.Schema({
+        userid: String,
+        task: String,
+        complete: String },
         {timestamps : true} )
 )
