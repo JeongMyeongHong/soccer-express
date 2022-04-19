@@ -2,7 +2,10 @@ require('dotenv').config();
 const cors = require('cors')
 const express = require('express');
 const app = express()
+const tokenRouter = require('./app/routes/token');
+app.use('/token', tokenRouter);
 const { port, MONGO_URI } = process.env;
+
 
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended:true}))
@@ -34,10 +37,10 @@ app.listen(port, () => {
   console.log(`Server Started at ${new Date().toLocaleString()}`)
   console.log(`****************서버가 정상적으로 실행되고 있습니다*****************`)
 })
-// 윗 부분은 설정값, 아랫부분이 출력값이다. 
 app.get('/', (req, res) => {
   res.json({"현재 시간 : " : new Date().toLocaleString()})
 })
 app.get('/api/now', cors(corsOptions), (req, res) => {
   res.json({"now":new Date().toLocaleString()})
 })
+
