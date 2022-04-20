@@ -1,4 +1,4 @@
-const { getBmi, getcalc } = require("../services/basic.service")
+const { getBmi, getcalc } = require("../services/basicService")
 
 exports.calc = (req, res) => {
     const {num1, opcode, num2} = req.body

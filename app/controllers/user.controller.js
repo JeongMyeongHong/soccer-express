@@ -1,52 +1,76 @@
-const db = require('../models/index')
-require("dotenv").config()
-const jwt = require('jsonwebtoken')
+import db from '../models/index.js'
+import express from 'express';
 
-const UserSchema = db.user
-exports.signUp = (req, res) => {
-    console.log(` 진행 4 : 노드 유저 가입 서버에 진입함 ${JSON.stringify(req.body)}`)
-    new UserSchema(req.body).save(()=>{
-        res.status(200).json({'result':'ok'}) 
-    })
-}
+export default function UserController() {
+    const router = express.Router();
+    const User = db.user
+    router.post('/api/user/signUp', function (req, res) {
+            console.log(' ### 진행 4: 노드서버에 진입함 ' + JSON.stringify(req.body))
+            new User(req.body).save(() => {
+                res
+                    .status(200)
+                    .json({'result': 'ok'})
+            })
+        });
+    router.get('list', function (req, res) {
 
-const users = []
+        User.find()
+            .exec((err, users) => {
+                if (err) 
+                    return res
+                        .status(400)
+                        .send(err)
+                res
+                    .status(200)
+                    .json({success: true, users})
+            })
 
-exports.login = (req, res) => {
-    console.log(` 진행 4 : 노드 로그인 서버에 진입함 ${JSON.stringify(req.body)}`)
-    // UserSchema.find({userid: req.params.userid, password: req.params.password})
-    // .exec((err, user) => {
-    //     if (err) return res.status(400).send(err)
-    //     res.status(200).json({ success: true, user })
-    // })
+    });
+    router.get('profile', function (req, res) {
+        console.log(`### user profile access ### `)
+        User.find({userid: req.params.id})
+            .exec((err, user) => {
+                if (err) 
+                    return res
+                        .status(400)
+                        .send(err)
+                res
+                    .status(200)
+                    .json({success: true, user})
+            })
 
-    const {id, password} = req.body;
-    const user = users.find(u=>u.id === id);
-    if(!user) {
-        return res.status(400).json('아이디 없음');
-    } else {
-        const isEqualPw = (password == user.password)
-        console.log(isEqualPw);
-        if(isEqualPw) 
-            return res.status(200).json({msg : "로그인 성공!",user});
-        else 
-            return res.status(404).json({msg : "로그인 실패"});
-    }
-}
+    });
+    router.post('login', function (req, res) {
+        console.log(`### user login access ### `)
+        User.find({userid: req.params.id, password: req.params.password})
+            .exec((err, user) => {
+                if (err) 
+                    return res
+                        .status(400)
+                        .send(err)
+                res
+                    .status(200)
+                    .json({success: true, user})
+            })
 
-exports.userList = (req, res) => {
-    console.log(`######유저 컨트롤러 엑세스######`)
-    UserSchema.find((err, users) => {
-        if (err) return res.status(400).send(err)
-        res.status(200).json({ success: true, users})
-    })
-}
+        try {
+            const id = 'test'
+            const nick = 'test'
+            // jwt.sign() 메소드: 토큰 발급
+            const token = jwt.sign({
+                id,
+                nick
+            }, process.env.JWT_SECRET, {
+                expiresIn: '1m', //1분
+                issuer: '토큰 발급자'
+            });
 
-exports.profile = (req, res) => {
-    console.log(`### 유저 프로필 엑세스 ###`)
-    UserSchema.find({userid: req.params.id})
-    .exec((err, user) => {
-        if (err) return res.status(400).send(err)
-        res.status(200).json({ success: true, user })
-    })
+            return res.json({code: 200, message: '토큰이 발급되었습니다.', token});
+        } catch (error) {
+            console.error(error);
+            return res
+                .status(500)
+                .json({code: 500, message: '서버 에러'});
+        }
+    });
 }
