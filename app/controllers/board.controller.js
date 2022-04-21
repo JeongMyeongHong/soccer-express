@@ -3,7 +3,7 @@ const BoardSchema = db.board
 
 exports.write = (req, res) => {
     console.log(` 진행 4 : 노드 게시판 글쓰기 서버에 진입함 ${JSON.stringify(req.body)}`)
-    new BoardSchema(req.body).save(() => {
+    new BoardSchema(req.body).save(() => {//new 는 스키마만 가져오고 data는 가져오지 않는다.
         res.status(200).json({'result':'ok'})
     })
 }
