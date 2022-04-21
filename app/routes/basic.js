@@ -11,8 +11,7 @@ const app = express();
 app.use(cors());
 
 app.post('/bmi', cors(corsOptions),(req, res) => {
-  const service = new BasicService()
-  res.status(200).json(service.getBmi(req, res))
+  res.status(200).json(BasicService().getBmi(req, res))
 })
 
 export default app;
