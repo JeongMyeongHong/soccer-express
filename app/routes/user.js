@@ -17,14 +17,12 @@ app.use(function(_req, res, next){
     next();
 });
 
-app.post('/join', cors(corsOptions),(req, res, next) => {
+app.post('/join', cors(corsOptions),(req, res) => {
     new UserService().join(req, res);
-    // next();
   })
 
-app.post('/login', cors(corsOptions),(req, res, next) => {
+app.post('/login', cors(corsOptions),(req, res) => {
     new UserService().login(req, res);
-    // next();
   })
 
 
