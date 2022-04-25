@@ -8,8 +8,10 @@ export default function UserModel(mongoose) {
         email: String,
         name: String,
         phone: String,
+        image: String,
         birth: String,
-        address: String
+        address: String,
+        token: String
     }, {timestamps: true})
     userSchema.methods.comparePassword = function (plainPassword, cb) {
         //cb는 (err,isMatch)이다. plainPassword 유저가 입력한 password

@@ -18,38 +18,38 @@ export default function UserService() {
             })
         },
         login(req, res) {
-            User
-                .findOne({userid: req.body.userid}, function(err, user){
-                    if(err) throw err
-                    if(!user){
-                        res.status(401).send({success: false, msg: '존재하지 않는 아이디 입니다.'});
-                    }else{
-                        console.log(' ### 로그인 정보 : '+ JSON.stringify(user))
-                        user.comparePassword(req.body.password, function(_err, isMatch){
-                            console.log(' ### JWT 발급 전 : ')
-                            if(!isMatch){
-                                console.log(' ### 비밀번호 틀렸엉ㅋ : ')
-                                res.status(401).send({loginSuccess: false, msg: '비밀번호가 틀렸습니다.'});
-                            }else{
-                                console.log(' ### JWT 발급 직전 : ')
-                                /**const token = jwt.sign(user.toJSON(), 'jwt-secret', {
-                                    expiresIn: 604800 // 1 week
-                                })
-                                console.log(' ### JWT 발급 : '+ token)
-                                res.json({success: true, token: 'JWT ' + token});*/
-                                user.generateToken((err, user)=>{
-                                    if(err) res.status(400).send(err)
-                        
-                                    // 토큰을 저장한다. 어디에? 쿠키, 로컬스토리지
+            User.findOne({
+                userid: req.body.userid
+            }, function (err, user) {
+                if (err) 
+                    throw err
+                if (!user) {
+                    res
+                        .status(401)
+                        .send({success: false, message: '해당 ID가 존재하지 않습니다'});
+                } else {
+                    console.log(' ### 로그인 정보 : ' + JSON.stringify(user))
+                    user.comparePassword(req.body.password, function (_err, isMatch) {
+                        if (!isMatch) {
+                            res
+                                .status(401)
+                                .send({message:'FAIL'});
+                        } else {
+                            user.generateToken((err, user) => {
+                                if (err) 
                                     res
+                                        .status(400)
+                                        .send(err)
+
+                                    // 토큰을 저장한다. 어디에? 쿠키, 로컬스토리지
+                                res
                                     .status(200)
-                                    .json({loginSuccess : true, token : user.token, user: user})
-                                })
-                            }
-                        })
-                    }
-                });
-        },
+                                    .json(user)
+                            })
+                        }
+                    })
+                }
+            })},
         list(_req, res) {
             User
                 .find()
